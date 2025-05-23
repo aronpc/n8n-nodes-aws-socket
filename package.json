@@ -35,7 +35,7 @@
       "dist/credentials/AwsWebSocketApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/AwsWebSocket/AwsWebSocket.node.js"
+      "dist/index.js"
     ]
   }
 }

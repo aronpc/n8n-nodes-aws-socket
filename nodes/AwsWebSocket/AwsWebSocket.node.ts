@@ -24,8 +24,8 @@ export class AwsWebSocket implements INodeType {
     defaults: {
       name: 'AWS WebSocket',
     },
-    inputs: ['main'],
-    outputs: ['main'],
+    inputs: [{ type: 'main' }],
+    outputs: [{ type: 'main' }],
     credentials: [
       {
         name: 'awsWebSocketApi',
@@ -136,7 +136,7 @@ export class AwsWebSocket implements INodeType {
           returnData.push({
             json: {
               success: false,
-              error: error.message,
+              error: error instanceof Error ? error.message : String(error),
             },
           });
           continue;
