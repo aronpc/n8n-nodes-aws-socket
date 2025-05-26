@@ -104,6 +104,7 @@ export class AwsWebSocket implements INodeType {
         : {
             accessKeyId: credentials.awsAccessKeyId as string,
             secretAccessKey: credentials.awsSecretAccessKey as string,
+            ...(credentials.awsSessionToken && { sessionToken: credentials.awsSessionToken as string }),
           },
     });
 

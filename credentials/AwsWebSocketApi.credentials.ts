@@ -24,6 +24,16 @@ export class AwsWebSocketApi implements ICredentialType {
       default: '',
     },
     {
+      displayName: 'AWS Session Token',
+      name: 'awsSessionToken',
+      type: 'string',
+      typeOptions: {
+        password: true,
+      },
+      default: '',
+      description: 'Session token for temporary credentials',
+    },
+    {
       displayName: 'AWS Region',
       name: 'awsRegion',
       type: 'string',
