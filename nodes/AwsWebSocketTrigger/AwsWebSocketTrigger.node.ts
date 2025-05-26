@@ -8,9 +8,9 @@ import {
   IDataObject,
 } from 'n8n-workflow';
 
-// Import WebSocket as a CommonJS module to ensure it works as a constructor
+// Import WebSocket directly using dynamic import to ensure it works as a constructor
 // @ts-ignore
-const WebSocket = require('ws');
+const WebSocket = eval('require')('ws');
 import type { ClientOptions, Data } from 'ws';
 
 // Define WebSocket constants
