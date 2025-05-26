@@ -42,7 +42,7 @@
       },
       "id": "3",
       "name": "AWS WebSocket",
-      "type": "n8n-nodes-aws-websocket.awsWebSocket",
+      "type": "n8n-nodes-websocket-aws.awsWebSocket",
       "typeVersion": 1,
       "position": [
         650,

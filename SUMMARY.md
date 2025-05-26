@@ -47,7 +47,7 @@ To test this implementation:
    ```
    npm link
    cd /path/to/n8n
-   npm link n8n-nodes-aws-websocket
+   npm link n8n-nodes-websocket-aws
    ```
 
 4. Restart n8n and check if the node appears in the nodes panel

@@ -1,4 +1,4 @@
-# n8n-nodes-aws-websocket
+# n8n-nodes-websocket-aws
 
 This is an n8n community node package that allows you to send messages to and receive messages from AWS API Gateway WebSocket connections.
 
@@ -8,7 +8,7 @@ This is an n8n community node package that allows you to send messages to and re
 
 1. Go to **Settings > Community Nodes**
 2. Select **Install**
-3. Enter `n8n-nodes-aws-websocket` in **Enter npm package name**
+3. Enter `n8n-nodes-websocket-aws` in **Enter npm package name**
 4. Click **Install**
 
 ### In n8n Cloud
@@ -117,7 +117,7 @@ If you want to develop and modify this package:
 2. Install dependencies: `npm install`
 3. Build the package: `npm run build`
 4. Link to your n8n installation: `npm link`
-5. In your n8n installation directory: `npm link n8n-nodes-aws-websocket`
+5. In your n8n installation directory: `npm link n8n-nodes-websocket-aws`
 
 ## Resources
 

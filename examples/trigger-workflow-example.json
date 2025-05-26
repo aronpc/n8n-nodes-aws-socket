@@ -16,7 +16,7 @@
       },
       "id": "1",
       "name": "AWS WebSocket Trigger",
-      "type": "n8n-nodes-aws-websocket.awsWebSocketTrigger",
+      "type": "n8n-nodes-websocket-aws.awsWebSocketTrigger",
       "typeVersion": 1,
       "position": [
         250,
