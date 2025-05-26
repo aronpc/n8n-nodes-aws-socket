@@ -96,16 +96,24 @@ export class AwsWebSocket implements INodeType {
     }
 
     // Initialize AWS API Gateway Management API client
+    // Clean profile name by removing square brackets if present
+    const profileName = credentials.awsProfileName
+      ? (credentials.awsProfileName as string).replace(/[\[\]]/g, '')
+      : undefined;
+
+    // Use explicit credentials if profile is undefined or "default"
+    const useExplicitCredentials = !profileName || profileName === 'default';
+
     const apigatewayClient = new ApiGatewayManagementApiClient({
       endpoint,
       region: credentials.awsRegion as string,
-      credentials: credentials.awsProfileName
-        ? fromIni({ profile: credentials.awsProfileName as string })
-        : {
+      credentials: useExplicitCredentials
+        ? {
             accessKeyId: credentials.awsAccessKeyId as string,
             secretAccessKey: credentials.awsSecretAccessKey as string,
             ...(credentials.awsSessionToken && { sessionToken: credentials.awsSessionToken as string }),
-          },
+          }
+        : fromIni({ profile: profileName }),
     });
 
     // Process each item

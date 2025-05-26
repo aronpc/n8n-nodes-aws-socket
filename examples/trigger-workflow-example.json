@@ -1,0 +1,103 @@
+{
+  "name": "AWS WebSocket Trigger Example",
+  "nodes": [
+    {
+      "parameters": {
+        "webSocketUrl": "wss://xxxxx.execute-api.region.amazonaws.com/stage",
+        "protocol": "",
+        "headers": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_TOKEN"
+            }
+          ]
+        }
+      },
+      "id": "1",
+      "name": "AWS WebSocket Trigger",
+      "type": "n8n-nodes-aws-websocket.awsWebSocketTrigger",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ],
+      "credentials": {
+        "awsWebSocketApi": {
+          "id": "1",
+          "name": "AWS WebSocket API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process the incoming WebSocket message\nconst data = $input.item.json.data;\n\n// You can add your custom processing logic here\n// For example, you might want to transform the data or filter certain messages\n\nreturn [\n  {\n    json: {\n      processedData: data,\n      receivedAt: $input.item.json.timestamp,\n      // Add any additional fields you need\n      processed: true\n    }\n  }\n];"
+      },
+      "id": "2",
+      "name": "Process Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://hooks.slack.com/services/YOUR_SLACK_WEBHOOK",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "=Received WebSocket message: {{ JSON.stringify($json.processedData) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3",
+      "name": "Send Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        650,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "AWS WebSocket Trigger": {
+      "main": [
+        [
+          {
+            "node": "Process Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Message": {
+      "main": [
+        [
+          {
+            "node": "Send Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
