@@ -5,7 +5,7 @@ import {
 
 export class AwsWebSocketApi implements ICredentialType {
   name = 'awsWebSocketApi';
-  displayName = 'AWS WebSocket API';
+  displayName = 'AWS WebSocket (API)';
   documentationUrl = 'https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-websocket-api.html';
   properties: INodeProperties[] = [
     {
