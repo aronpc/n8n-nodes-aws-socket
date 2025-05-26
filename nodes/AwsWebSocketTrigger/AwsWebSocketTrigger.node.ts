@@ -8,12 +8,12 @@ import {
   IDataObject,
 } from 'n8n-workflow';
 
-import {
-  ApiGatewayManagementApiClient,
-} from '@aws-sdk/client-apigatewaymanagementapi';
-import { fromIni } from '@aws-sdk/credential-provider-ini';
 // @ts-ignore
-import WebSocket from 'ws';
+const WebSocket = require('ws');
+import type { ClientOptions, Data } from 'ws';
+
+// Define WebSocket constants
+const OPEN = 1; // WebSocket.OPEN constant value
 
 export class AwsWebSocketTrigger implements INodeType {
   description: INodeTypeDescription = {
@@ -121,7 +121,7 @@ export class AwsWebSocketTrigger implements INodeType {
     }
 
     // Create WebSocket connection
-    const options: WebSocket.ClientOptions = {
+    const options: ClientOptions = {
       headers,
     };
 
@@ -141,7 +141,7 @@ export class AwsWebSocketTrigger implements INodeType {
     };
 
     // This will receive messages from the WebSocket connection
-    ws.on('message', (data: WebSocket.Data) => {
+    ws.on('message', (data: Data) => {
       let message: string;
 
       if (Buffer.isBuffer(data)) {
@@ -181,14 +181,14 @@ export class AwsWebSocketTrigger implements INodeType {
 
     // The function that gets called when the workflow gets deactivated
     async function closeFunction() {
-      if (ws.readyState === WebSocket.OPEN) {
+      if (ws.readyState === OPEN) {
         ws.close();
       }
     }
 
     // The function that gets called when the workflow gets activated
     async function startFunction() {
-      if (ws.readyState !== WebSocket.OPEN) {
+      if (ws.readyState !== OPEN) {
         return new Promise<void>((resolve, reject) => {
           ws.on('open', () => {
             resolve();
@@ -203,7 +203,7 @@ export class AwsWebSocketTrigger implements INodeType {
 
     // Initialize the WebSocket connection when the node is activated
     await new Promise<void>((resolve, reject) => {
-      if (ws.readyState === WebSocket.OPEN) {
+      if (ws.readyState === OPEN) {
         resolve();
         return;
       }
@@ -216,6 +216,9 @@ export class AwsWebSocketTrigger implements INodeType {
         reject(error);
       });
     });
+
+    // Call startFunction to ensure it's executed when the trigger is activated
+    await startFunction();
 
     return {
       closeFunction,
