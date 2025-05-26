@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-aws-websocket",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "n8n node to send messages to AWS API Gateway WebSocket connections",
   "main": "dist/nodes/AwsWebSocket/AwsWebSocket.node.js",
   "scripts": {
