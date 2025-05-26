@@ -1,6 +1,6 @@
 # n8n-nodes-aws-websocket
 
-This is an n8n community node that allows you to send messages to AWS API Gateway WebSocket connections.
+This is an n8n community node package that allows you to send messages to and receive messages from AWS API Gateway WebSocket connections.
 
 ## Installation
 
@@ -34,15 +34,27 @@ Before using the AWS WebSocket node, you need to set up credentials for AWS API 
 
 ### Node Configuration
 
+#### AWS WebSocket Node
+
 The AWS WebSocket node has the following configuration options:
 
 - **Operation**: Currently only "Send Message" is supported
 - **Connection ID**: The ID of the WebSocket connection to send the message to
 - **Message**: The message content to send to the connection
 
-### Example Workflow
+#### AWS WebSocket Trigger Node
 
-Here's an example of how to use the AWS WebSocket node in a workflow:
+The AWS WebSocket Trigger node allows you to listen for messages from AWS API Gateway WebSocket connections. It has the following configuration options:
+
+- **WebSocket URL**: The WebSocket URL to connect to (e.g., wss://xxxxx.execute-api.region.amazonaws.com/stage)
+- **Connection Protocol** (optional): Protocol for the WebSocket connection
+- **Headers** (optional): Headers to include in the WebSocket connection request
+
+### Example Workflows
+
+#### AWS WebSocket Node Example
+
+Here's an example of how to use the AWS WebSocket node to send messages:
 
 1. Use a trigger node (e.g., Webhook, Cron) to start the workflow
 2. Add the AWS WebSocket node
@@ -50,13 +62,60 @@ Here's an example of how to use the AWS WebSocket node in a workflow:
 4. Set the Connection ID and Message fields
 5. Execute the workflow
 
+#### AWS WebSocket Trigger Node Example
+
+Here's an example of how to use the AWS WebSocket Trigger node to receive messages:
+
+1. Add the AWS WebSocket Trigger node as the start of your workflow
+2. Configure the node with your AWS WebSocket API credentials
+3. Set the WebSocket URL to connect to
+4. Add nodes to process the received messages
+5. Activate the workflow
+
+Example workflows are available in the `examples` directory:
+- `sample-workflow.json`: Example of sending messages with the AWS WebSocket node
+- `trigger-workflow-example.json`: Example of receiving messages with the AWS WebSocket Trigger node
+
+## Local Testing
+
+This package includes tools for testing the AWS WebSocket nodes locally without requiring an actual AWS API Gateway WebSocket endpoint.
+
+### Prerequisites
+
+- Node.js installed on your machine
+- n8n installed locally or in development mode
+- This package installed in n8n
+
+### Testing Steps
+
+1. Start the local WebSocket server:
+   ```bash
+   node test/local-websocket-server.js
+   ```
+
+2. In a separate terminal, run the test client:
+   ```bash
+   node test/websocket-test-client.js
+   ```
+
+3. Configure your n8n workflow:
+   - For the AWS WebSocket Trigger node, set the WebSocket URL to `ws://localhost:3000`
+   - For the AWS WebSocket node, set the API Gateway Endpoint in credentials to `http://localhost:3001`
+   - Use the connection ID provided by the test client
+
+4. Activate your workflow and test the communication between the nodes and the local WebSocket server
+
+For detailed instructions and more information, see the [test/README.md](test/README.md) file.
+
+A sample workflow for local testing is available at `test/sample-local-workflow.json`.
+
 ## Development
 
-If you want to develop and modify this node:
+If you want to develop and modify this package:
 
 1. Clone this repository
 2. Install dependencies: `npm install`
-3. Build the node: `npm run build`
+3. Build the package: `npm run build`
 4. Link to your n8n installation: `npm link`
 5. In your n8n installation directory: `npm link n8n-nodes-aws-websocket`
 

@@ -1,0 +1,139 @@
+{
+  "name": "AWS WebSocket Local Testing",
+  "nodes": [
+    {
+      "parameters": {
+        "webSocketUrl": "ws://localhost:3000",
+        "protocol": "",
+        "headers": {
+          "parameters": []
+        }
+      },
+      "id": "1",
+      "name": "AWS WebSocket Trigger",
+      "type": "n8n-nodes-aws-websocket.awsWebSocketTrigger",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ],
+      "credentials": {
+        "awsWebSocketApi": {
+          "id": "1",
+          "name": "AWS WebSocket Local"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process the incoming WebSocket message\nconst data = $input.item.json.data;\n\n// Log the received data\nconsole.log('Received WebSocket message:', data);\n\n// Extract the connection ID if it exists in the message\nlet connectionId = null;\nif (data && data.connectionId) {\n  connectionId = data.connectionId;\n}\n\n// Prepare a response message\nconst responseMessage = {\n  type: 'response',\n  message: 'Message received by n8n workflow',\n  timestamp: new Date().toISOString(),\n  originalData: data\n};\n\nreturn [\n  {\n    json: {\n      processedData: data,\n      receivedAt: $input.item.json.timestamp,\n      connectionId: connectionId,\n      responseMessage: JSON.stringify(responseMessage)\n    }\n  }\n];"
+      },
+      "id": "2",
+      "name": "Process Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.connectionId !== null }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "3",
+      "name": "Has Connection ID?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        650,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "sendMessage",
+        "connectionId": "={{ $json.connectionId }}",
+        "message": "={{ $json.responseMessage }}"
+      },
+      "id": "4",
+      "name": "Send Response",
+      "type": "n8n-nodes-aws-websocket.awsWebSocket",
+      "typeVersion": 1,
+      "position": [
+        850,
+        200
+      ],
+      "credentials": {
+        "awsWebSocketApi": {
+          "id": "1",
+          "name": "AWS WebSocket Local"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "=## Message Received\n\nNo connection ID was found in the message, so we can't send a response back.\n\n### Message Details\n\n```json\n{{ JSON.stringify($json.processedData, null, 2) }}\n```\n\n### Received At\n\n{{ $json.receivedAt }}\n",
+        "height": 255,
+        "width": 400
+      },
+      "id": "5",
+      "name": "No Connection ID",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        850,
+        400
+      ]
+    }
+  ],
+  "connections": {
+    "AWS WebSocket Trigger": {
+      "main": [
+        [
+          {
+            "node": "Process Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Message": {
+      "main": [
+        [
+          {
+            "node": "Has Connection ID?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Connection ID?": {
+      "main": [
+        [
+          {
+            "node": "Send Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Connection ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

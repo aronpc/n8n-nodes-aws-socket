@@ -8,6 +8,7 @@ import {
   IDataObject,
 } from 'n8n-workflow';
 
+// Import WebSocket as a CommonJS module to ensure it works as a constructor
 // @ts-ignore
 const WebSocket = require('ws');
 import type { ClientOptions, Data } from 'ws';
@@ -94,21 +95,43 @@ export class AwsWebSocketTrigger implements INodeType {
       throw new NodeOperationError(this.getNode(), 'No credentials provided!');
     }
 
-    const webSocketUrl = this.getNodeParameter('webSocketUrl') as string;
-    const protocol = this.getNodeParameter('protocol') as string;
+    // Safely get required parameters
+    let webSocketUrl: string;
+    try {
+      webSocketUrl = this.getNodeParameter('webSocketUrl') as string;
+      if (!webSocketUrl) {
+        throw new NodeOperationError(this.getNode(), 'WebSocket URL is required!');
+      }
+    } catch (error) {
+      throw new NodeOperationError(this.getNode(), 'Could not get WebSocket URL parameter!');
+    }
+
+    // Protocol is optional
+    let protocol = '';
+    try {
+      if (this.getNode().parameters.protocol !== undefined) {
+        protocol = this.getNodeParameter('protocol') as string;
+      }
+    } catch (error) {
+      this.logger.warn('Error getting protocol parameter', { error });
+    }
 
     // Safely get headers.parameters if they exist
     let headersCollection: Array<{ name: string; value: string; }> | undefined;
     try {
-      const headers = this.getNodeParameter('headers') as IDataObject;
-      if (headers && headers.parameters) {
-        headersCollection = headers.parameters as Array<{
-          name: string;
-          value: string;
-        }>;
+      // First check if the headers parameter exists to avoid "Could not get parameter" error
+      if (this.getNode().parameters.headers !== undefined) {
+        const headers = this.getNodeParameter('headers') as IDataObject;
+        if (headers && headers.parameters) {
+          headersCollection = headers.parameters as Array<{
+            name: string;
+            value: string;
+          }>;
+        }
       }
     } catch (error) {
       // Headers parameter doesn't exist or is not properly configured
+      this.logger.warn('Error getting headers parameter', { error });
       headersCollection = undefined;
     }
 
@@ -132,7 +155,6 @@ export class AwsWebSocketTrigger implements INodeType {
     const ws = new WebSocket(webSocketUrl, options);
 
     // Setup event handlers
-    const manualTriggerEnabled = this.getNodeParameter('manualTrigger', false) as boolean;
 
     // Function to manually trigger the node
     const manualTriggerFunction = async (): Promise<void> => {
