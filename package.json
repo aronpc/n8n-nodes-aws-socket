@@ -2,9 +2,9 @@
   "name": "n8n-nodes-aws-websocket",
   "version": "1.0.2",
   "description": "n8n node to send messages to AWS API Gateway WebSocket connections",
-  "main": "dist/index.js",
+  "main": "dist/nodes/AwsWebSocket/AwsWebSocket.node.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cp nodes/AwsWebSocket/awsWebSocket.svg dist/nodes/AwsWebSocket/",
     "dev": "tsc --watch",
     "test": "jest"
   },
@@ -35,7 +35,7 @@
       "dist/credentials/AwsWebSocketApi.credentials.js"
     ],
     "nodes": [
-      "dist/index.js"
+      "dist/nodes/AwsWebSocket/AwsWebSocket.node.js"
     ]
   }
 }

@@ -3,6 +3,7 @@ import {
   INodeExecutionData,
   INodeType,
   INodeTypeDescription,
+  NodeConnectionType,
   NodeOperationError,
 } from 'n8n-workflow';
 
@@ -24,8 +25,8 @@ export class AwsWebSocket implements INodeType {
     defaults: {
       name: 'AWS WebSocket',
     },
-    inputs: [{ type: 'main' }],
-    outputs: [{ type: 'main' }],
+    inputs: [NodeConnectionType.Main],
+    outputs: [NodeConnectionType.Main],
     credentials: [
       {
         name: 'awsWebSocketApi',
