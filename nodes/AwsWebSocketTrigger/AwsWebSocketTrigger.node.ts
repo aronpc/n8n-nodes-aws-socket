@@ -5,6 +5,7 @@ import {
   ITriggerResponse,
   NodeConnectionType,
   NodeOperationError,
+  IDataObject,
 } from 'n8n-workflow';
 
 import {
@@ -12,7 +13,7 @@ import {
 } from '@aws-sdk/client-apigatewaymanagementapi';
 import { fromIni } from '@aws-sdk/credential-provider-ini';
 // @ts-ignore
-import * as WebSocket from 'ws';
+import WebSocket from 'ws';
 
 export class AwsWebSocketTrigger implements INodeType {
   description: INodeTypeDescription = {
@@ -95,10 +96,21 @@ export class AwsWebSocketTrigger implements INodeType {
 
     const webSocketUrl = this.getNodeParameter('webSocketUrl') as string;
     const protocol = this.getNodeParameter('protocol') as string;
-    const headersCollection = this.getNodeParameter('headers.parameters') as Array<{
-      name: string;
-      value: string;
-    }> | undefined;
+
+    // Safely get headers.parameters if they exist
+    let headersCollection: Array<{ name: string; value: string; }> | undefined;
+    try {
+      const headers = this.getNodeParameter('headers') as IDataObject;
+      if (headers && headers.parameters) {
+        headersCollection = headers.parameters as Array<{
+          name: string;
+          value: string;
+        }>;
+      }
+    } catch (error) {
+      // Headers parameter doesn't exist or is not properly configured
+      headersCollection = undefined;
+    }
 
     // Prepare headers
     const headers: Record<string, string> = {};
