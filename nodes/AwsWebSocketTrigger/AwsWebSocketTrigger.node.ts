@@ -8,10 +8,37 @@ import {
   IDataObject,
 } from 'n8n-workflow';
 
-// Import WebSocket directly using dynamic import to ensure it works as a constructor
-// @ts-ignore
-const WebSocket = eval('require')('ws');
+// Import WebSocket in a way that works in both browser and Node.js environments
 import type { ClientOptions, Data } from 'ws';
+
+// Create a WebSocket factory function that works in any environment
+function createWebSocket(url: string, options?: ClientOptions): any {
+  try {
+    // Try to use the 'ws' module directly first (Node.js environment)
+    // This is the most common case for n8n
+    const WS = require('ws');
+    return new WS(url, options);
+  } catch (error) {
+    // If direct require fails, try using eval to avoid reference errors
+    try {
+      const WS = eval('require')('ws');
+      return new WS(url, options);
+    } catch (evalError) {
+      // As a last resort, try using the global scope
+      try {
+        // @ts-ignore - Check if we're in a browser environment with WebSocket global
+        if (typeof globalThis !== 'undefined' && typeof globalThis.WebSocket === 'function') {
+          // @ts-ignore - Use the global WebSocket constructor
+          return new globalThis.WebSocket(url, options);
+        }
+      } catch (globalError) {
+        // All approaches failed
+      }
+
+      throw new Error('Failed to create WebSocket: No WebSocket implementation available');
+    }
+  }
+}
 
 // Define WebSocket constants
 const OPEN = 1; // WebSocket.OPEN constant value
@@ -152,7 +179,7 @@ export class AwsWebSocketTrigger implements INodeType {
       options.protocol = protocol;
     }
 
-    const ws = new WebSocket(webSocketUrl, options);
+    const ws = createWebSocket(webSocketUrl, options);
 
     // Setup event handlers
 
