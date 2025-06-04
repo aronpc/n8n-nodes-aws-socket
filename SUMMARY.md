@@ -21,6 +21,7 @@ This project implements a custom n8n node that allows sending messages to AWS AP
 - **Node Implementation**:
   - `nodes/AwsWebSocket/AwsWebSocket.node.ts`: Main node implementation
   - `nodes/AwsWebSocket/awsWebSocket.svg`: Node icon
+  - `nodes/WebSocketTrigger/WebSocketTrigger.node.ts`: Trigger node for incoming WebSocket messages
 
 - **Credential Handling**:
   - `credentials/AwsWebSocketApi.credentials.ts`: AWS credential type definition

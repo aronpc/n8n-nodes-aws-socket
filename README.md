@@ -50,6 +50,10 @@ Here's an example of how to use the AWS WebSocket node in a workflow:
 4. Set the Connection ID and Message fields
 5. Execute the workflow
 
+### WebSocket Trigger Node
+
+This package also provides a *WebSocket Trigger* node which connects to any WebSocket server and triggers the workflow whenever a message is received. Configure the node with the WebSocket URL and the incoming messages will be passed as JSON with a `message` field.
+
 ## Development
 
 If you want to develop and modify this node:
